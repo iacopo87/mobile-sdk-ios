@@ -88,18 +88,16 @@ class NetverifyCustomUIViewController: UIViewController, UITableViewDataSource, 
             return
         }
         
-        // Add capture info view
-        guard let captureInfoView = Bundle.main.loadNibNamed("CaptureInfoView", owner: self, options: nil)?.first as? CaptureInfoView else { return }
-        captureInfoView.setup(documentType: currentDocumentType)
-        captureInfoView.descriptionLabel.text = netverifyScanViewController.localizedShortHelpText()
-        captureInfoView.setSteps(current: netverifyScanViewController.currentStep(), total: netverifyScanViewController.totalSteps())
-        if isFallback { captureInfoView.addFallbackHandler(action: netverifyScanViewController.switchToFallback) }
+        // Unclickable privacy policy behind transparent overlay
+        let overlayView = UIView()
+        overlayView.translatesAutoresizingMaskIntoConstraints = false
+        overlayView.backgroundColor = UIColor(red: .zero, green: 200, blue: .zero, alpha: 0.01)
+        netverifyScanViewController.customOverlayLayer.addSubview(overlayView)
         
-        captureInfoView.translatesAutoresizingMaskIntoConstraints = false
-        netverifyScanViewController.customOverlayLayer.addSubview(captureInfoView)
-        
-        netverifyScanViewController.customOverlayLayer.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:[view(==\(captureInfoView.getContentHeight()))]|", options: NSLayoutConstraint.FormatOptions(rawValue: 0), metrics: nil, views: ["view": captureInfoView]))
-        netverifyScanViewController.customOverlayLayer.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[view]|", options: NSLayoutConstraint.FormatOptions(rawValue: 0), metrics: nil, views: ["view": captureInfoView]))
+        overlayView.leadingAnchor.constraint(equalTo: netverifyScanViewController.customOverlayLayer.leadingAnchor).isActive = true
+        overlayView.trailingAnchor.constraint(equalTo: netverifyScanViewController.customOverlayLayer.trailingAnchor).isActive = true
+        overlayView.topAnchor.constraint(equalTo: netverifyScanViewController.customOverlayLayer.topAnchor).isActive = true
+        overlayView.bottomAnchor.constraint(equalTo: netverifyScanViewController.customOverlayLayer.bottomAnchor).isActive = true
     }
     
     // MARK: NetverifyUIControllerDelegate
